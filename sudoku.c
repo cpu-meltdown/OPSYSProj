@@ -59,6 +59,8 @@ void getPossibleValues (int board[][9], int possibleValues[][8]){
 	      i++;
 	    }
 	  }
+	  if (i == 1)
+	    board[tempi][tempj] = possibleValues[(tempi*9)+tempj][i-1];
 	  memset(tempColValues, 0, sizeof(tempColValues));
 	  memset(tempRowValues, 0, sizeof(tempRowValues));
 	  memset(tempSqrValues, 0, sizeof(tempSqrValues));
