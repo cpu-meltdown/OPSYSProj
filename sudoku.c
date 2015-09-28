@@ -2,6 +2,91 @@
 #include <stdlib.h>
 #include <string.h>
 
+int usedInRow(int board[][9], int row, int num)
+{
+  int col;
+    for (col = 0; col < 9; col++)
+        if (board[row][col] == num)
+            return 1;
+    return 0;
+}
+
+/* Returns a boolean which indicates whether any assigned entry
+   in the specified column matches the given number. */
+int usedInCol(int board[][9], int col, int num)
+{
+  int row;
+    for (row = 0; row < 9; row++)
+        if (board[row][col] == num)
+            return 1;
+    return 0;
+}
+ 
+/* Returns a boolean which indicates whether any assigned entry
+   within the specified 3x3 box matches the given number. */
+int usedInBox(int board[][9], int boxStartRow, int boxStartCol, int num)
+{
+  int row, col;
+    for (row = 0; row < 3; row++)
+        for (col = 0; col < 3; col++)
+            if (board[row+boxStartRow][col+boxStartCol] == num)
+                return 1;
+    return 0;
+}
+ 
+/* Returns a boolean which indicates whether it will be legal to assign
+   num to the given row,col location. */
+int  isSafe(int board[][9], int row, int col, int num)
+{
+    /* Check if 'num' is not already placed in current row,
+       current column and current 3x3 box */
+    return !usedInRow(board, row, num) &&
+           !usedInCol(board, col, num) &&
+           !usedInBox(board, row - row%3 , col - col%3, num);
+}
+
+
+int findUnassignedLocation(int board[][9], int *row, int *col)
+{
+  for (*row = 0; *row < 9; (*row)++)
+    for (*col = 0; *col < 9; (*col)++)
+        if (board[*row][*col] == 0)
+	  return 1;
+    return 0;
+}
+
+int solveSudoku(int board[][9], int possibleValues[][8])
+{
+  int row, col;
+  
+    if (!findUnassignedLocation(board, &row, &col))
+       return 1; // success!
+ 
+    int i = (row * 9) + col;
+    // consider digits 1 to 9
+    int j = 0;
+    int num  = 1;
+    while (num)
+    {
+      num = possibleValues[i][j];
+        // if looks promising
+        if (isSafe(board, row, col, num))
+        {
+            // make tentative assignment
+            board[row][col] = num;
+ 
+            // return, if success, yay!
+            if (solveSudoku(board, possibleValues))
+                return 1;
+ 
+            // failure, unmake & try again
+            board[row][col] = 0;
+        }
+	j++;
+    }
+    return 0; // this triggers backtracking
+}
+
 //Read the sudoku board from text file
 void readInitialBoard (int board[][9]){
    FILE * fp;
@@ -22,7 +107,7 @@ void readInitialBoard (int board[][9]){
    fclose(fp);
 }
 
-//Fill possibleValues matrix with possible values of every cell
+//Fill possibleValues matrix with possible values of each cell
 void getPossibleValues (int board[][9], int possibleValues[][8]){
   int tempi, tempj, row, col,  k, l, sqr, i;
   int tempRowValues[9] = {0};
@@ -81,17 +166,21 @@ void getPossibleValues (int board[][9], int possibleValues[][8]){
 
 }
 
+void print (int board [][9]){
+  int i, j;
+  for (i = 0; i < 9; i++){
+    for (j = 0; j < 9; j++)
+      printf ("%d ",board[i][j]);
+    printf ("\n");
+  }
+}
 int main(){
   int board[9][9] = {0};
   int possibleValues[81][8] = {0};
   
   readInitialBoard(board);
   getPossibleValues(board, possibleValues);
-  int i=0,j=0;
-  for (i = 0; i < 81; i++){
-    for (j = 0; j < 8; j++)
-      printf ("%d ",possibleValues[i][j]);
-    printf("\n");
-  }
+  int result = solveSudoku(board, possibleValues);
+  result == 1 ? print(board) : printf("Unsolvable \n");
   return 0;
 }
