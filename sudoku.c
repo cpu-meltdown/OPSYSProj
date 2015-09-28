@@ -11,8 +11,6 @@ int usedInRow(int board[][9], int row, int num)
     return 0;
 }
 
-/* Returns a boolean which indicates whether any assigned entry
-   in the specified column matches the given number. */
 int usedInCol(int board[][9], int col, int num)
 {
   int row;
@@ -21,9 +19,7 @@ int usedInCol(int board[][9], int col, int num)
             return 1;
     return 0;
 }
- 
-/* Returns a boolean which indicates whether any assigned entry
-   within the specified 3x3 box matches the given number. */
+
 int usedInBox(int board[][9], int boxStartRow, int boxStartCol, int num)
 {
   int row, col;
@@ -34,12 +30,9 @@ int usedInBox(int board[][9], int boxStartRow, int boxStartCol, int num)
     return 0;
 }
  
-/* Returns a boolean which indicates whether it will be legal to assign
-   num to the given row,col location. */
+
 int  isSafe(int board[][9], int row, int col, int num)
 {
-    /* Check if 'num' is not already placed in current row,
-       current column and current 3x3 box */
     return !usedInRow(board, row, num) &&
            !usedInCol(board, col, num) &&
            !usedInBox(board, row - row%3 , col - col%3, num);
@@ -60,31 +53,31 @@ int solveSudoku(int board[][9], int possibleValues[][8])
   int row, col;
   
     if (!findUnassignedLocation(board, &row, &col))
-       return 1; // success!
+       return 1;
  
     int i = (row * 9) + col;
-    // consider digits 1 to 9
+ 
     int j = 0;
     int num  = 1;
     while (num)
     {
       num = possibleValues[i][j];
-        // if looks promising
+      
         if (isSafe(board, row, col, num))
         {
-            // make tentative assignment
+           
             board[row][col] = num;
  
-            // return, if success, yay!
+           
             if (solveSudoku(board, possibleValues))
                 return 1;
  
-            // failure, unmake & try again
+            
             board[row][col] = 0;
         }
 	j++;
     }
-    return 0; // this triggers backtracking
+    return 0;
 }
 
 //Read the sudoku board from text file
