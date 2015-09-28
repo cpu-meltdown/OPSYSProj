@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 int usedInRow(int board[][9], int row, int num)
 {
@@ -167,13 +168,21 @@ void print (int board [][9]){
     printf ("\n");
   }
 }
+
+
 int main(){
   int board[9][9] = {0};
   int possibleValues[81][8] = {0};
-  
+  clock_t start, end;
+  double runTime;
+
+  start = clock();
   readInitialBoard(board);
   getPossibleValues(board, possibleValues);
   int result = solveSudoku(board, possibleValues);
+  end = clock();
   result == 1 ? print(board) : printf("Unsolvable \n");
+  runTime = ((end - start) / (double) CLOCKS_PER_SEC);
+  printf ("Run time is %g seconds \n", runTime);
   return 0;
 }
