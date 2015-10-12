@@ -1,2 +1,3 @@
-# OPSYSProj
-CSCI 435 Operating Systems Class of Fall 2015.
+# SudokuSolver
+
+Sudoku puzzle solver using 1 thread and backtracking.
